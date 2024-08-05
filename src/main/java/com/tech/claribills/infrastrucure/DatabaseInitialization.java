@@ -10,8 +10,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +40,7 @@ public class DatabaseInitialization implements CommandLineRunner{
 
         Divida divida = Divida.builder()
                 .name("Memória ram 16gb")
-                .description("Comprei uma memória ram pra poder abrir mais de 3 abas no google chrome")
+                .description("Comprei mais memória ram pra poder abrir mais de 3 abas no google chrome")
                 .numberInstallments(3)
                 .totalAmount(new BigDecimal(299))
                 .cartao(cartao1)
