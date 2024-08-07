@@ -4,15 +4,18 @@ import com.tech.claribills.entity.*;
 import com.tech.claribills.repositories.BancoRepository;
 import com.tech.claribills.repositories.CartaoRepository;
 import com.tech.claribills.repositories.DividaRepository;
+import com.tech.claribills.repositories.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Profile(value = {"local"})
 @RequiredArgsConstructor
@@ -22,6 +25,8 @@ public class DatabaseInitialization implements CommandLineRunner{
     private final DividaRepository dividaRepository;
     private final BancoRepository bancoRepository;
     private final CartaoRepository cartaoRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
@@ -36,7 +41,12 @@ public class DatabaseInitialization implements CommandLineRunner{
         bancoRepository.saveAll(List.of(bradesco, itau, caixa));
         cartaoRepository.saveAll(Arrays.asList(cartao1, cartao2));
 
-        Usuario userCaio = Usuario.builder().name("Caio").username("caio").email("caio@gmail.com").password("123456").build();
+        Role roleUser = new Role(null, "USER");
+        Role roleAdmin = new Role(null, "ADMIN");
+
+        roleRepository.saveAll(List.of(roleUser, roleAdmin));
+
+        Usuario userCaio = Usuario.builder().name("Caio").username("caio").email("caio@gmail.com").password(passwordEncoder.encode("123456")).roles(Set.of(roleUser, roleAdmin)).build();
 
         Divida divida = Divida.builder()
                 .name("Memória ram 16gb")

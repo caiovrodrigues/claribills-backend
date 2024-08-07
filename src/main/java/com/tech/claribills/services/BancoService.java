@@ -16,6 +16,7 @@ public class BancoService {
 
     public List<Banco> getAllBancos() {
         return bancoRepository.findAll();
+
     }
 
     public Banco createNewBanco(BancoCreateDTO banco) {
