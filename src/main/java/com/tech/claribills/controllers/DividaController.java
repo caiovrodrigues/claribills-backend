@@ -4,6 +4,8 @@ import com.tech.claribills.dtos.*;
 import com.tech.claribills.services.DividaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,20 +17,37 @@ public class DividaController {
 
     private final DividaService dividaService;
 
-    @GetMapping
-    public ResponseEntity<List<DividaResponseDTO>> getAll(){
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @GetMapping("/todas")
+    public ResponseEntity<List<DividaResponseDTO>> getAllDividas(){
         return ResponseEntity.ok(this.dividaService.getAll());
     }
 
+    @GetMapping
+    public ResponseEntity<List<DividaResponseDTO>> getAllDividasEParticipants(JwtAuthenticationToken token){
+        return ResponseEntity.ok(dividaService.getAllDividasEDividasParticipants(token));
+    }
+
+    @GetMapping("/convites")
+    public ResponseEntity<List<DividasConviteResponseDTO>> getConvitesPendentes(JwtAuthenticationToken token){
+        return ResponseEntity.ok(dividaService.getConvitesPendentes(token));
+    }
+
     @PostMapping
-    public ResponseEntity<Void> post(@RequestBody DividaCreateRequestDTO data){
-        this.dividaService.create(data);
+    public ResponseEntity<Void> criarDivida(@RequestBody DividaCreateRequestDTO data, JwtAuthenticationToken token){
+        this.dividaService.create(data, token);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/participant")
-    public ResponseEntity<Void> addParticipantInADivida(@RequestBody DividaParticipantCreateRequestDTO data){
-        dividaService.addParticipantEmUmaDivida(data);
+    @PostMapping("/{dividaId}/participants/{participantId}")
+    public ResponseEntity<Void> addParticipantInADivida(@PathVariable Integer dividaId, @PathVariable Integer participantId, JwtAuthenticationToken token){
+        dividaService.addParticipantEmUmaDivida(dividaId, participantId, token);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/convites/{dividaConviteId}")
+    public ResponseEntity<Void> responderConvitesParaDivida(@RequestBody ConviteResponseDTO conviteResponse, @PathVariable Integer dividaConviteId, JwtAuthenticationToken token){
+        dividaService.respondeConviteParaDivida(dividaConviteId, conviteResponse, token);
         return ResponseEntity.noContent().build();
     }
 
@@ -39,8 +58,8 @@ public class DividaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDivida(@PathVariable("id") Integer idDivida){
-        dividaService.delete(idDivida);
+    public ResponseEntity<Void> deleteDivida(@PathVariable("id") Integer idDivida, JwtAuthenticationToken token){
+        dividaService.delete(idDivida, token);
         return ResponseEntity.noContent().build();
     }
 

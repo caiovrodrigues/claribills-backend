@@ -1,10 +1,7 @@
 package com.tech.claribills.infrastrucure;
 
 import com.tech.claribills.entity.*;
-import com.tech.claribills.repositories.BancoRepository;
-import com.tech.claribills.repositories.CartaoRepository;
-import com.tech.claribills.repositories.DividaRepository;
-import com.tech.claribills.repositories.RoleRepository;
+import com.tech.claribills.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -27,6 +24,7 @@ public class DatabaseInitialization implements CommandLineRunner{
     private final CartaoRepository cartaoRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ParticipanteDividasStatusRepository dividasStatusRepository;
 
     @Override
     public void run(String... args) {
@@ -48,6 +46,8 @@ public class DatabaseInitialization implements CommandLineRunner{
 
         Usuario userCaio = Usuario.builder().name("Caio").username("caio").email("caio@gmail.com").password(passwordEncoder.encode("123456")).roles(Set.of(roleUser, roleAdmin)).build();
 
+        ParticipanteDividasStatus statusAccepted = dividasStatusRepository.findByStatus(ParticipanteDividasStatus.ACCEPTED);
+
         Divida divida = Divida.builder()
                 .name("Memória ram 16gb")
                 .description("Comprei mais memória ram pra poder abrir mais de 3 abas no google chrome")
@@ -57,7 +57,7 @@ public class DatabaseInitialization implements CommandLineRunner{
                 .owner(userCaio)
                 .participants(new HashSet<>())
                 .build();
-        divida.getParticipants().add(new ParticipanteDividas(null, userCaio, divida));
+        divida.getParticipants().add(ParticipanteDividas.builder().usuario(userCaio).divida(divida).status(statusAccepted).build());
 
         dividaRepository.save(divida);
 

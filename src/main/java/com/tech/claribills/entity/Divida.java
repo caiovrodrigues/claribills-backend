@@ -1,6 +1,5 @@
 package com.tech.claribills.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,7 +7,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @EqualsAndHashCode(of = "id")
@@ -56,17 +54,4 @@ public class Divida {
     @OneToMany(mappedBy = "divida", cascade = CascadeType.ALL)
     private Set<ParticipanteDividas> participants;
 
-    @Override
-    public String toString() {
-        return "Divida{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", numberInstallments=" + numberInstallments +
-                ", paidInstallments=" + paidInstallments +
-                ", totalAmount=" + totalAmount +
-                ", updatedAt=" + updatedAt +
-                ", cartao=" + cartao +
-                '}';
-    }
 }

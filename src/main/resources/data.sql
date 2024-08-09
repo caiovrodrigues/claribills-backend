@@ -1,1 +1,2 @@
 INSERT INTO banco(name, cartao_img_url) VALUES ('Bradesco', 'https://banco.bradesco/html/classic/produtos-servicos/cartoes/assets/images/cards/bradesco-visa-neo.png')
+INSERT INTO participante_dividas_status(status) VALUES ('ACCEPTED'), ('PENDING'), ('DENIED')

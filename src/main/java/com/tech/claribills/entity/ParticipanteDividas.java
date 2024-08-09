@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @EqualsAndHashCode(of = "id")
 @Builder
@@ -30,5 +33,11 @@ public class ParticipanteDividas {
     @ManyToOne
     private Divida divida;
 
+    @JoinColumn(name = "status")
+    @ManyToOne
+    private ParticipanteDividasStatus status;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
 }
