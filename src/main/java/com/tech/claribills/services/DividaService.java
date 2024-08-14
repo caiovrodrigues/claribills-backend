@@ -5,6 +5,7 @@ import com.tech.claribills.entity.Divida;
 import com.tech.claribills.entity.ParticipanteDividas;
 import com.tech.claribills.entity.ParticipanteDividasStatus;
 import com.tech.claribills.entity.Usuario;
+import com.tech.claribills.entity.mapper.DividaMapper;
 import com.tech.claribills.infrastrucure.exceptions.UsuarioIsNotOwner;
 import com.tech.claribills.repositories.DividaRepository;
 import com.tech.claribills.repositories.ParticipanteDividasRepository;
@@ -110,7 +111,8 @@ public class DividaService {
 
     public List<DividasConviteResponseDTO> getConvitesPendentes(JwtAuthenticationToken token) {
         Usuario usuario = usuarioService.findById(Integer.valueOf(token.getName()));
-        return usuario.getDividasParticipant().stream().map(DividasConviteResponseDTO::new).filter(d -> !d.divida().owner().id().equals(Integer.valueOf(token.getName()))).toList();
+        return DividaMapper.INSTANCE.convertParticipanteDividasToDto(usuario.getDividasParticipant())
+                .stream().filter(d -> !d.divida().owner().id().equals(Integer.valueOf(token.getName()))).toList();
     }
 
     @Transactional

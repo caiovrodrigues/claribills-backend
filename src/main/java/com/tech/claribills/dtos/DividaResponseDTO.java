@@ -35,6 +35,6 @@ public record DividaResponseDTO(
         );
     }
 
-    record ParticipantsDTO(Integer id, LocalDateTime createdAt, ParticipanteDividasStatus status, UsuarioResponseDTO usuario){}
+    public record ParticipantsDTO(Integer id, LocalDateTime createdAt, ParticipanteDividasStatus status, UsuarioResponseDTO usuario){}
 }
 
