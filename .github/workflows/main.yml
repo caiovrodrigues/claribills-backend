@@ -15,12 +15,12 @@ jobs:
         with:
           username: ${{secrets.DOCKER_HUB_LOGIN}}
           password: ${{secrets.DOCKER_HUB_PASSWORD}}
-      - name: "Build da imagem docker"
+      - name: "Contrução da imagem e push para o docker hub"
         uses: docker/build-push-action@v6.9.0
         with:
           context: .
           file: Dockerfile
           push: true
           tags: |
-            caiovrodrigues/claribills:v1
+            caiovrodrigues/claribills:${{github.run_number}}
             caiovrodrigues/claribills:latest
