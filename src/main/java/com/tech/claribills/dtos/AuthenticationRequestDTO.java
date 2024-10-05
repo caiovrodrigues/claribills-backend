@@ -1,4 +1,6 @@
 package com.tech.claribills.dtos;
 
-public record AuthenticationRequestDTO(String login, String password) {
+import jakarta.validation.constraints.NotBlank;
+
+public record AuthenticationRequestDTO(@NotBlank String login, @NotBlank String password) {
 }
