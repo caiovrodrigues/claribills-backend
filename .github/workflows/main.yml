@@ -3,10 +3,11 @@ name: "CI"
 on:
   push:
     branches:
-      - Main
+      - main
 
 jobs:
-  runs-on: ubuntu-latest
+  CI:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.0
       - name: "Build da imagem docker"
@@ -14,4 +15,3 @@ jobs:
         with:
           context: .
           file: Dockerfile
-        
