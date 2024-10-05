@@ -16,3 +16,6 @@ jobs:
           context: .
           file: Dockerfile
           push: true
+          tags: |
+            - caiovrodrigues/claribills:v1
+            - caiovrodrigues/claribills:latest
