@@ -1,15 +1,15 @@
 package com.tech.claribills.services;
 
-import com.nimbusds.jwt.JWTClaimsSet;
 import com.tech.claribills.dtos.AuthenticationRequestDTO;
 import com.tech.claribills.dtos.TokenResponse;
 import com.tech.claribills.dtos.UsuarioCreateRequestDTO;
 import com.tech.claribills.entity.Role;
 import com.tech.claribills.entity.Usuario;
+import com.tech.claribills.infrastrucure.exceptions.classes.CredenciaisInvalidasException;
+import com.tech.claribills.infrastrucure.exceptions.classes.UserNotFoundException;
 import com.tech.claribills.repositories.RoleRepository;
 import com.tech.claribills.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -47,9 +46,9 @@ public class UsuarioService {
     }
 
     public TokenResponse verifyAuthentication(AuthenticationRequestDTO credentials) {
-        Usuario usuario = usuarioRepository.findByEmailOrUsername(credentials.login(), credentials.login()).orElseThrow();
+        Usuario usuario = usuarioRepository.findByEmailOrUsername(credentials.login(), credentials.login()).orElseThrow(UserNotFoundException::new);
         if (!passwordEncoder.matches(credentials.password(), usuario.getPassword())) {
-            throw new BadCredentialsException("Email ou senha inválida.");
+            throw new CredenciaisInvalidasException();
         }
 
         Instant now = Instant.now();

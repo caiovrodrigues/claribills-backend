@@ -6,7 +6,8 @@ import com.tech.claribills.entity.ParticipanteDividas;
 import com.tech.claribills.entity.ParticipanteDividasStatus;
 import com.tech.claribills.entity.Usuario;
 import com.tech.claribills.entity.mapper.DividaMapper;
-import com.tech.claribills.infrastrucure.exceptions.UsuarioIsNotOwner;
+import com.tech.claribills.infrastrucure.exceptions.classes.DividaNotFoundException;
+import com.tech.claribills.infrastrucure.exceptions.classes.UserNotOwnerException;
 import com.tech.claribills.repositories.DividaRepository;
 import com.tech.claribills.repositories.ParticipanteDividasRepository;
 import com.tech.claribills.repositories.ParticipanteDividasStatusRepository;
@@ -19,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class DividaService {
@@ -33,7 +35,7 @@ public class DividaService {
     }
 
     public Divida findById(Integer id){
-        return dividaRepository.findById(id).orElseThrow();
+        return dividaRepository.findById(id).orElseThrow(DividaNotFoundException::new);
     }
 
     public void create(DividaCreateRequestDTO data, JwtAuthenticationToken token) {
@@ -51,11 +53,10 @@ public class DividaService {
         dividaRepository.save(divida);
     }
 
-    @Transactional
     public void addParticipantEmUmaDivida(Integer dividaId, Integer participantId, JwtAuthenticationToken token) {
         Divida divida = findById(dividaId);
         if (!divida.getOwner().getId().equals(Integer.valueOf(token.getName()))) {
-            throw new UsuarioIsNotOwner();
+            throw new UserNotOwnerException();
         }
         Usuario participant = usuarioService.findById(participantId);
 
@@ -66,13 +67,12 @@ public class DividaService {
         dividaRepository.save(divida);
     }
 
-    @Transactional
     public void delete(Integer idDivida, JwtAuthenticationToken token) {
         Usuario usuario = usuarioService.findById(Integer.valueOf(token.getName()));
         Divida divida = findById(idDivida);
         System.out.println(token.getAuthorities());
         if (!(divida.getOwner().equals(usuario) || token.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("SCOPE_ADMIN")))) {
-            throw new UsuarioIsNotOwner();
+            throw new UserNotOwnerException();
         }
         dividaRepository.delete(divida);
     }
@@ -115,18 +115,18 @@ public class DividaService {
                 .stream().filter(d -> !d.divida().owner().id().equals(Integer.valueOf(token.getName()))).toList();
     }
 
-    @Transactional
     public void respondeConviteParaDivida(Integer dividaConviteId, ConviteResponseDTO response, JwtAuthenticationToken token) {
 
         ParticipanteDividas participanteDivida = participanteDividasRepository.findById(dividaConviteId).orElseThrow();
         Usuario usuario = usuarioService.findById(Integer.valueOf(token.getName()));
 
         if (!participanteDivida.getUsuario().equals(usuario)) {
-            throw new UsuarioIsNotOwner();
+            throw new UserNotOwnerException();
         }
 
         ParticipanteDividasStatus newStatus = dividasStatusRepository.findByStatus(response.action());
         participanteDivida.setStatus(newStatus);
         participanteDividasRepository.save(participanteDivida);
     }
+
 }

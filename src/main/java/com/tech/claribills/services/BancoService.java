@@ -2,6 +2,7 @@ package com.tech.claribills.services;
 
 import com.tech.claribills.dtos.BancoCreateDTO;
 import com.tech.claribills.entity.Banco;
+import com.tech.claribills.infrastrucure.exceptions.classes.BancoNotFoundException;
 import com.tech.claribills.repositories.BancoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,10 @@ public class BancoService {
 
     public List<Banco> getAllBancos() {
         return bancoRepository.findAll();
+    }
 
+    public Banco getBancoById(Integer id) {
+        return bancoRepository.findById(id).orElseThrow(BancoNotFoundException::new);
     }
 
     public Banco createNewBanco(BancoCreateDTO banco) {
@@ -24,12 +28,8 @@ public class BancoService {
         return bancoRepository.save(newBanco);
     }
 
-    public Banco getBancoById(Integer id) {
-        return bancoRepository.findById(id).orElseThrow();
-    }
-
     public void deleteBancoPeloId(Integer id) {
-        Banco bancoById = getBancoById(id);
-        bancoRepository.delete(bancoById);
+        Banco banco = getBancoById(id);
+        bancoRepository.delete(banco);
     }
 }
