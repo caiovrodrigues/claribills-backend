@@ -19,6 +19,7 @@ import java.util.Set;
 @Component
 public class DatabaseInitialization implements CommandLineRunner{
 
+    private final UsuarioRepository usuarioRepository;
     private final DividaRepository dividaRepository;
     private final BancoRepository bancoRepository;
     private final CartaoRepository cartaoRepository;
@@ -45,6 +46,10 @@ public class DatabaseInitialization implements CommandLineRunner{
         roleRepository.saveAll(List.of(roleUser, roleAdmin));
 
         Usuario userCaio = Usuario.builder().name("Caio").username("caio").email("caio@gmail.com").password(passwordEncoder.encode("123456")).roles(Set.of(roleUser, roleAdmin)).build();
+        Usuario userLara = Usuario.builder().name("Lara").username("lara").email("lara@gmail.com").password(passwordEncoder.encode("123456")).roles(Set.of(roleUser)).build();
+
+        usuarioRepository.save(userCaio);
+        usuarioRepository.save(userLara);
 
         ParticipanteDividasStatus statusAccepted = dividasStatusRepository.findByStatus(ParticipanteDividasStatus.ACCEPTED);
 

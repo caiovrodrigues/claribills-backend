@@ -2,11 +2,12 @@ package com.tech.claribills.controllers;
 
 import com.tech.claribills.dtos.BancoCreateDTO;
 import com.tech.claribills.entity.Banco;
+import com.tech.claribills.infrastrucure.security.RoleAdmin;
+import com.tech.claribills.infrastrucure.security.RoleUser;
 import com.tech.claribills.services.BancoService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -20,17 +21,19 @@ public class BancoController {
 
     private final BancoService bancoService;
 
+    @RoleUser
     @GetMapping
     public ResponseEntity<List<Banco>> getAllBancos(){
         return ResponseEntity.ok(bancoService.getAllBancos());
     }
 
+    @RoleUser
     @GetMapping("/{id}")
     public ResponseEntity<Banco> getBancoById(@PathVariable Integer id){
         return ResponseEntity.ok(bancoService.getBancoById(id));
     }
 
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @RoleAdmin
     @PostMapping
     public ResponseEntity<Banco> postBanco(@RequestBody BancoCreateDTO banco, UriComponentsBuilder uriBuilder, HttpServletRequest request){
         Banco newBanco = bancoService.createNewBanco(banco);
@@ -38,7 +41,7 @@ public class BancoController {
         return ResponseEntity.created(uri).body(newBanco);
     }
 
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @RoleAdmin
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBanco(@PathVariable Integer id){
         bancoService.deleteBancoPeloId(id);

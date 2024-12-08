@@ -70,15 +70,19 @@ public class DividaService {
     public void delete(Integer idDivida, JwtAuthenticationToken token) {
         Usuario usuario = usuarioService.findById(Integer.valueOf(token.getName()));
         Divida divida = findById(idDivida);
-        System.out.println(token.getAuthorities());
         if (!(divida.getOwner().equals(usuario) || token.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("SCOPE_ADMIN")))) {
             throw new UserNotOwnerException();
         }
         dividaRepository.delete(divida);
     }
 
-    public DividaAtualizarResponseDTO atualizarDivida(Integer id, DividaAtualizarDTO newDivida) {
+    public DividaAtualizarResponseDTO atualizarDivida(Integer id, DividaAtualizarDTO newDivida, JwtAuthenticationToken user) {
         Divida divida = findById(id);
+
+        if (!divida.getOwner().getId().equals(Integer.valueOf(user.getName()))) {
+            throw new UserNotOwnerException();
+        }
+
         List<String> listaCamposNewDivida = Arrays.stream(newDivida.getClass().getDeclaredFields()).filter(field -> {
             field.setAccessible(true);
             try {

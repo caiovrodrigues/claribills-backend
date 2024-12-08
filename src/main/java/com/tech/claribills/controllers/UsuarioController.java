@@ -4,11 +4,11 @@ import com.tech.claribills.dtos.AuthenticationRequestDTO;
 import com.tech.claribills.dtos.TokenResponse;
 import com.tech.claribills.dtos.UsuarioCreateRequestDTO;
 import com.tech.claribills.entity.Usuario;
+import com.tech.claribills.infrastrucure.security.RoleAdmin;
 import com.tech.claribills.services.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-    @PreAuthorize(value = "hasAuthority('SCOPE_ADMIN')")
+    @RoleAdmin
     @GetMapping
     public ResponseEntity<List<Usuario>> getAllUsers(){
         return ResponseEntity.ok(this.usuarioService.getAll());

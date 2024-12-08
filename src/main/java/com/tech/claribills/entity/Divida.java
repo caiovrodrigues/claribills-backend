@@ -44,11 +44,11 @@ public class Divida {
     private LocalDateTime updatedAt;
 
     @JoinColumn(name = "owner")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Usuario owner;
 
     @JoinColumn(name = "cartao")
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Cartao cartao;
 
     @OneToMany(mappedBy = "divida", cascade = CascadeType.ALL)
