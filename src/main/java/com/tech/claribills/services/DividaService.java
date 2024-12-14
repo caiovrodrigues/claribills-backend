@@ -6,11 +6,12 @@ import com.tech.claribills.entity.ParticipanteDividas;
 import com.tech.claribills.entity.ParticipanteDividasStatus;
 import com.tech.claribills.entity.Usuario;
 import com.tech.claribills.entity.mapper.DividaMapper;
-import com.tech.claribills.infrastrucure.exceptions.classes.DividaNotFoundException;
+import com.tech.claribills.infrastrucure.exceptions.ExcepConst;
 import com.tech.claribills.infrastrucure.exceptions.classes.UserNotOwnerException;
 import com.tech.claribills.repositories.DividaRepository;
 import com.tech.claribills.repositories.ParticipanteDividasRepository;
 import com.tech.claribills.repositories.ParticipanteDividasStatusRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class DividaService {
     }
 
     public Divida findById(Integer id){
-        return dividaRepository.findById(id).orElseThrow(DividaNotFoundException::new);
+        return dividaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ExcepConst.DIVIDA_NOT_FOUND.getMessage()));
     }
 
     public void create(DividaCreateRequestDTO data, JwtAuthenticationToken token) {
@@ -121,7 +122,9 @@ public class DividaService {
 
     public void respondeConviteParaDivida(Integer dividaConviteId, ConviteResponseDTO response, JwtAuthenticationToken token) {
 
-        ParticipanteDividas participanteDivida = participanteDividasRepository.findById(dividaConviteId).orElseThrow();
+        ParticipanteDividas participanteDivida = participanteDividasRepository
+                .findById(dividaConviteId)
+                .orElseThrow(() -> new EntityNotFoundException(ExcepConst.DIVIDA_PARTICIPANT_NOT_FOUND.getMessage()));
         Usuario usuario = usuarioService.findById(Integer.valueOf(token.getName()));
 
         if (!participanteDivida.getUsuario().equals(usuario)) {

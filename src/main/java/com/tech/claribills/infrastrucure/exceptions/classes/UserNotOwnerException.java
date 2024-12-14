@@ -1,11 +1,11 @@
 package com.tech.claribills.infrastrucure.exceptions.classes;
 
-import com.tech.claribills.infrastrucure.exceptions.ExceptionConstants;
+import com.tech.claribills.infrastrucure.exceptions.ExcepConst;
 
-public class UserNotOwnerException extends EntityNotFoundException{
+public class UserNotOwnerException extends RuntimeException {
 
     public UserNotOwnerException(){
-        super(ExceptionConstants.USUARIO_NOT_OWNER);
+        super(ExcepConst.USUARIO_NOT_OWNER.getMessage());
     }
 
 }

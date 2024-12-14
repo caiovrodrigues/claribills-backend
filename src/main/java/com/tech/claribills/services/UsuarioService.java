@@ -5,10 +5,11 @@ import com.tech.claribills.dtos.TokenResponse;
 import com.tech.claribills.dtos.UsuarioCreateRequestDTO;
 import com.tech.claribills.entity.Role;
 import com.tech.claribills.entity.Usuario;
+import com.tech.claribills.infrastrucure.exceptions.ExcepConst;
 import com.tech.claribills.infrastrucure.exceptions.classes.CredenciaisInvalidasException;
-import com.tech.claribills.infrastrucure.exceptions.classes.UserNotFoundException;
 import com.tech.claribills.repositories.RoleRepository;
 import com.tech.claribills.repositories.UsuarioRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -42,11 +43,11 @@ public class UsuarioService {
     }
 
     public Usuario findById(Integer id) {
-        return usuarioRepository.findById(id).orElseThrow();
+        return usuarioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ExcepConst.USUARIO_NOT_FOUND.getMessage()));
     }
 
     public TokenResponse verifyAuthentication(AuthenticationRequestDTO credentials) {
-        Usuario usuario = usuarioRepository.findByEmailOrUsername(credentials.login(), credentials.login()).orElseThrow(UserNotFoundException::new);
+        Usuario usuario = usuarioRepository.findByEmailOrUsername(credentials.login(), credentials.login()).orElseThrow(() -> new EntityNotFoundException(ExcepConst.USUARIO_NOT_FOUND.getMessage()));
         if (!passwordEncoder.matches(credentials.password(), usuario.getPassword())) {
             throw new CredenciaisInvalidasException();
         }

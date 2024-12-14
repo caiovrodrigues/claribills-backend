@@ -1,11 +1,11 @@
 package com.tech.claribills.infrastrucure.exceptions.classes;
 
-import com.tech.claribills.infrastrucure.exceptions.ExceptionConstants;
+import com.tech.claribills.infrastrucure.exceptions.ExcepConst;
 
 public class CredenciaisInvalidasException extends RuntimeException{
 
     public CredenciaisInvalidasException(){
-        super(ExceptionConstants.CREDENCIAIS_INVALIDAS);
+        super(ExcepConst.CREDENCIAIS_INVALIDAS.getMessage());
     }
 
 }

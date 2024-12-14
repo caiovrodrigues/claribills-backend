@@ -2,8 +2,9 @@ package com.tech.claribills.services;
 
 import com.tech.claribills.dtos.BancoCreateDTO;
 import com.tech.claribills.entity.Banco;
-import com.tech.claribills.infrastrucure.exceptions.classes.BancoNotFoundException;
+import com.tech.claribills.infrastrucure.exceptions.ExcepConst;
 import com.tech.claribills.repositories.BancoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class BancoService {
     }
 
     public Banco getBancoById(Integer id) {
-        return bancoRepository.findById(id).orElseThrow(BancoNotFoundException::new);
+        return bancoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ExcepConst.BANCO_NOT_FOUND.getMessage()));
     }
 
     public Banco createNewBanco(BancoCreateDTO banco) {
